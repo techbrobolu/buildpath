@@ -8,8 +8,9 @@
     "strict": true,
     "skipLibCheck": true,
     "paths": {
-      "@/types": ["./src/types"]
-    }
+			"@/types": ["./src/types"],
+			"@/constants": ["./src/constants"]
+		}
   },
   "include": [
     "./src/**/*"

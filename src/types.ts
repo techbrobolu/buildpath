@@ -1,22 +1,30 @@
 type Item = {
-    id: string;
+    readonly id: string;
     name: string;
     author: string;
     isBorrowed: boolean;
 }
 
 type Member = {
-    id: string;
+    readonly id: string;
     name: string;
 }
 
 type Loan = {
-    id: string;
+    readonly id: string;
     memberId: string;
     itemId: string;
-    loanDate: Date;
-    dueDate: Date;
-    returnDate: Date | null;
+    loanDate: string;
+    dueDate: string;
+    returnDate: string | null;
 }
 
-export { Item, Member, Loan }
+type CheckoutResponse = {
+    canBorrow: boolean;
+    reason?: string;
+    loan?: Loan;
+}
+
+type CheckOut = (memberId: string, itemId: string, currentDate?: string) => CheckoutResponse
+
+export { Item, Member, Loan, CheckOut }
