@@ -1,0 +1,25 @@
+{
+	"name": "buildpath",
+	"version": "1.0.0",
+	"description": "A clear path to becoming a fullstack engineer.",
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc",
+    "typecheck": "tsc --noEmit"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/techbrobolu/buildpath.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "commonjs",
+	"bugs": {
+		"url": "https://github.com/techbrobolu/buildpath/issues"
+	},
+	"homepage": "https://github.com/techbrobolu/buildpath#readme",
+	"devDependencies": {
+		"typescript": "^7.0.2"
+	}
+}
