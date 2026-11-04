@@ -25,6 +25,18 @@ type CheckoutResponse = {
 	loan?: Loan;
 };
 
-type CheckOut = (memberId: string, itemId: string, currentDate?: string) => CheckoutResponse;
+type CheckinResponse = {
+	overdue?: boolean;
+	message: string;
+};
 
-export { Item, Member, Loan, CheckOut };
+type OverdueStatus = {
+	overdue: boolean;
+	message: string;
+};
+
+type CheckOut = (memberId: string, itemId: string, currentDate?: string) => CheckoutResponse;
+type CheckIn = (itemId: string, currentDate?: string) => CheckinResponse;
+type IsOverdue = (dueDate: string, currentDate: string) => OverdueStatus;
+
+export { Item, Member, Loan, CheckOut, CheckIn, IsOverdue };
