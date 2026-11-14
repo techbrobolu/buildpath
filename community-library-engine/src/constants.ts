@@ -61,6 +61,10 @@ const members: Member[] = [
     {
         id: "3",
         name: "John Smith",
+    },
+    {
+        id: "4",
+        name: "Filly Anderson"
     }
 ];
 
@@ -83,11 +87,11 @@ const loans: Loan[] = [
 	},
 	{
 		id: "3",
-		memberId: "5",
+		memberId: "4",
 		itemId: "4",
 		loanDate: "2025-10-08T10:00:00.000Z",
 		dueDate: "2025-10-22T10:00:00.000Z",
-		returnDate: "2025-10-20T10:00:00.000Z",
+		returnDate: null,
 	},
 	{
 		id: "4",

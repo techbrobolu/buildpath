@@ -35,7 +35,7 @@ type OverdueStatus = {
 	message: string;
 };
 
-type CheckOut = (memberId: string, itemId: string, currentDate?: string) => CheckoutResponse;
+type CheckOut = (memberId: string, itemId: string, items: Item[], loans: Loan[], currentDate?: string) => CheckoutResponse;
 type CheckIn = (itemId: string, currentDate?: string) => CheckinResponse;
 type IsOverdue = (dueDate: string, currentDate: string) => OverdueStatus;
 

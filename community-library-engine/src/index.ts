@@ -1,5 +1,5 @@
 import type { Item, Loan, CheckOut, CheckIn, IsOverdue } from "@/types";
-import { loans, items, MAX_DAYS, MS_PER_DAY, MAX_ACTIVE_LOANS } from "@/constants";
+import { loans, members, items, MAX_DAYS, MS_PER_DAY, MAX_ACTIVE_LOANS } from "@/constants";
 
 const isOverdue: IsOverdue = (dueDate, currentDate) => {
 	const diffMs = new Date(currentDate).getTime() - new Date(dueDate).getTime(); // diffMs = currentDate in milliseconds - dueDate in milliseconds
@@ -12,7 +12,7 @@ const isOverdue: IsOverdue = (dueDate, currentDate) => {
     return { overdue: false, message: "The book is not overdue" };
 };
 
-const checkOut: CheckOut = (memberId, itemId, currentDate = new Date().toISOString()) => {
+export const checkOut: CheckOut = (memberId, itemId, items, loans, currentDate = new Date().toISOString()) => {
     // 1. if the book doesn't exist return a response that states it
     // 2. if the book is already borrowed return a response that states it
     // 3. filter for the member's active loans
@@ -26,7 +26,12 @@ const checkOut: CheckOut = (memberId, itemId, currentDate = new Date().toISOStri
     //    > push the new loan object to the loans array
     //    > return a response that states it can be borrowed and the loan object
 
-	const book: Item = items.filter((item) => item.id === itemId)[0];
+	const member = members.find((member) => member.id == memberId)
+	if(!member){
+		return {canBorrow: false, reason: "Member does not exist" }
+	}
+
+	const book = items.find((item) => item.id === itemId);
 	if (!book) {
 		return { canBorrow: false, reason: "Book does not exist" };
 	}
@@ -42,7 +47,7 @@ const checkOut: CheckOut = (memberId, itemId, currentDate = new Date().toISOStri
 	}
 
 	if (activeLoans.some((loan) => isOverdue(loan.dueDate, currentDate).overdue)) {
-		return { canBorrow: false, reason: "Book is overdue" };
+		return { canBorrow: false, reason: "You have an active overdue loan" };
 	}
 
 	book.isBorrowed = true;
@@ -61,7 +66,7 @@ const checkOut: CheckOut = (memberId, itemId, currentDate = new Date().toISOStri
 	return { canBorrow: true, loan: loan };
 };
 
-const checkIn: CheckIn = (itemId, currentDate = new Date().toISOString()) => {
+export const checkIn: CheckIn = (itemId, currentDate = new Date().toISOString()) => {
     // 1. if book is checked out return message else set the book's borrow status to false
     // 2. set the loan's return date to the current date
     // 3. check if the book is overdue and return the appropriate response
