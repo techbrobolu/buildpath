@@ -6,10 +6,10 @@ const isOverdue: IsOverdue = (dueDate, currentDate) => {
 	if (diffMs > 0)
 		return {
 			overdue: true,
-			message: `The book is overdue by ${Math.ceil(diffMs / 1000 / 60 / 60 / 24)} day(s)`,
+			message: `The loan is overdue by ${Math.ceil(diffMs / 1000 / 60 / 60 / 24)} day(s)`,
 		};
 
-    return { overdue: false, message: "The book is not overdue" };
+    return { overdue: false, message: "The loan is not overdue" };
 };
 
 export const checkOut: CheckOut = (memberId, itemId, items, loans, currentDate = new Date().toISOString()) => {
@@ -69,7 +69,10 @@ export const checkOut: CheckOut = (memberId, itemId, items, loans, currentDate =
 export const checkIn: CheckIn = (itemId, currentDate = new Date().toISOString()) => {
     // 1. if book is checked out return message else set the book's borrow status to false
     // 2. set the loan's return date to the current date
-    // 3. check if the book is overdue and return the appropriate response
+	// 3. check if the book is overdue and return the appropriate response
+	if (!items.find((item) => item.id === itemId)) {
+		return { message: "itemId does not exist" }
+	}
 
 	const loan: Loan = loans.filter((loan) => loan.itemId === itemId && loan.returnDate === null)[0];
 	if (!loan) {
