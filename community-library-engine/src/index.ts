@@ -97,7 +97,7 @@ export const checkIn: CheckIn = (itemId, currentDate = new Date().toISOString())
 	return { overdue: false, message: "Book checked in successfully" };
 };
 
-export const listOverdue: ListOverdue = () => {
+export const listOverdue: ListOverdue = (loans) => {
 	// 1. Get current date
 	// 2. Get overdue loans by filtering the main loans array using the conditions:
 	//		> If the loan's returnDate is null AND
@@ -116,5 +116,5 @@ export const listOverdue: ListOverdue = () => {
 		loan.overdueTime = overdueResponse.overdueTime
 	})
 
-	return overdueLoans.sort((a, b) => (b.overdueTime ?? 0) - (a.overdueTime ?? 0));
+	return overdueLoans.sort((a, b) => (a.overdueTime ?? 0) - (b.overdueTime ?? 0));
 }

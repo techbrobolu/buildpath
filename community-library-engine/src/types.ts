@@ -40,6 +40,6 @@ type OverdueStatus = {
 type CheckOut = (memberId: string, itemId: string, items: Item[], loans: Loan[], currentDate?: string) => CheckoutResponse;
 type CheckIn = (itemId: string, currentDate?: string) => CheckinResponse;
 type IsOverdue = (loan: Loan, currentDate: string) => OverdueStatus;
-type ListOverdue = () => Loan[] | string
+type ListOverdue = (loans: Loan[]) => Loan[] | string
 
 export { Item, Member, Loan, CheckOut, CheckIn, IsOverdue, ListOverdue };
