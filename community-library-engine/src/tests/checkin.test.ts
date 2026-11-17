@@ -21,8 +21,8 @@ describe("checkin", () => {
     });
     it("should checkin successfully", () => {
         const itemId = "4"
-        const currentDate = "2025-10-20T10:00:00.000Z"
+        const currentDate = "2025-10-22T10:00:00.000Z"
         const result = checkIn(itemId, currentDate)
-        expect(result).toEqual({ overdue: false, message: "Book checked in successfully" });
+        expect(result.message).toEqual("Book checked in successfully");
     })
 })

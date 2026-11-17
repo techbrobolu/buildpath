@@ -1,15 +1,18 @@
-import type { Item, Loan, CheckOut, CheckIn, IsOverdue } from "@/types";
+import type { Item, Loan, CheckOut, CheckIn, IsOverdue, ListOverdue } from "@/types";
 import { loans, members, items, MAX_DAYS, MS_PER_DAY, MAX_ACTIVE_LOANS } from "@/constants";
 
-const isOverdue: IsOverdue = (dueDate, currentDate) => {
-	const diffMs = new Date(currentDate).getTime() - new Date(dueDate).getTime(); // diffMs = currentDate in milliseconds - dueDate in milliseconds
-	if (diffMs > 0)
+const isOverdue: IsOverdue = (loan, currentDate) => {
+	const diffMs = new Date(currentDate).getTime() - new Date(loan.dueDate).getTime(); // diffMs = currentDate in milliseconds - dueDate in milliseconds
+	if (diffMs > 0) {
+		const overdueTime = Math.ceil(diffMs / 1000 / 60 / 60 / 24)
 		return {
 			overdue: true,
-			message: `The loan is overdue by ${Math.ceil(diffMs / 1000 / 60 / 60 / 24)} day(s)`,
-		};
+			overdueTime: overdueTime,
+			message: `The loan is overdue by ${overdueTime} day(s)`,
+		}
+	};
 
-    return { overdue: false, message: "The loan is not overdue" };
+    return { overdue: false, overdueTime: 0, message: "The loan is not overdue" };
 };
 
 export const checkOut: CheckOut = (memberId, itemId, items, loans, currentDate = new Date().toISOString()) => {
@@ -46,7 +49,7 @@ export const checkOut: CheckOut = (memberId, itemId, items, loans, currentDate =
 		return { canBorrow: false, reason: `Member has already borrowed ${MAX_ACTIVE_LOANS} books` };
 	}
 
-	if (activeLoans.some((loan) => isOverdue(loan.dueDate, currentDate).overdue)) {
+	if (activeLoans.some((loan) => isOverdue(loan, currentDate).overdue)) {
 		return { canBorrow: false, reason: "You have an active overdue loan" };
 	}
 
@@ -70,6 +73,8 @@ export const checkIn: CheckIn = (itemId, currentDate = new Date().toISOString())
     // 1. if book is checked out return message else set the book's borrow status to false
     // 2. set the loan's return date to the current date
 	// 3. check if the book is overdue and return the appropriate response
+
+
 	if (!items.find((item) => item.id === itemId)) {
 		return { message: "itemId does not exist" }
 	}
@@ -83,10 +88,33 @@ export const checkIn: CheckIn = (itemId, currentDate = new Date().toISOString())
     book.isBorrowed = false;
 
 	loan.returnDate = currentDate;
-	const overdueResponse = isOverdue(loan.dueDate, currentDate);
+	const overdueResponse = isOverdue(loan, currentDate);
 	if (overdueResponse.overdue) {
+		loan.overdueTime = overdueResponse.overdueTime
 		return { overdue: true, message: overdueResponse.message };
     }
     
 	return { overdue: false, message: "Book checked in successfully" };
 };
+
+export const listOverdue: ListOverdue = () => {
+	// 1. Get current date
+	// 2. Get overdue loans by filtering the main loans array using the conditions:
+	//		> If the loan's returnDate is null AND
+	//		> If the loan is overdue (to be checked using the isOverdue func)
+	// 3. If there are no overdue loans return "There are no overdue loans"
+	// 4. For each overdue loans add their overdue duration
+	// 5. Sort the overdue loans using their overdue duration
+
+
+	const currentDate = new Date().toISOString()
+	const overdueLoans = loans.filter((loan) => loan.returnDate === null && isOverdue(loan, currentDate).overdue)
+	if (overdueLoans.length == 0) return "There are no overdue loans"
+	
+	overdueLoans.forEach((loan) => {
+		const overdueResponse = isOverdue(loan, currentDate)
+		loan.overdueTime = overdueResponse.overdueTime
+	})
+
+	return overdueLoans.sort((a, b) => (b.overdueTime ?? 0) - (a.overdueTime ?? 0));
+}

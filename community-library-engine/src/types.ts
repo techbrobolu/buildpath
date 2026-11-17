@@ -17,6 +17,7 @@ type Loan = {
 	loanDate: string;
 	dueDate: string;
 	returnDate: string | null;
+	overdueTime?: number;
 };
 
 type CheckoutResponse = {
@@ -32,11 +33,13 @@ type CheckinResponse = {
 
 type OverdueStatus = {
 	overdue: boolean;
+	overdueTime: number;
 	message: string;
 };
 
 type CheckOut = (memberId: string, itemId: string, items: Item[], loans: Loan[], currentDate?: string) => CheckoutResponse;
 type CheckIn = (itemId: string, currentDate?: string) => CheckinResponse;
-type IsOverdue = (dueDate: string, currentDate: string) => OverdueStatus;
+type IsOverdue = (loan: Loan, currentDate: string) => OverdueStatus;
+type ListOverdue = () => Loan[] | string
 
-export { Item, Member, Loan, CheckOut, CheckIn, IsOverdue };
+export { Item, Member, Loan, CheckOut, CheckIn, IsOverdue, ListOverdue };
