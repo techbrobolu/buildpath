@@ -120,9 +120,9 @@ export const listOverdue: ListOverdue = (loans, members, books, currentDate = ne
 		loan.overdueTime = overdueResponse.overdueTime;
 		overdueList.push({
 			loanId: loan.id,
-			memberName: members.find((member) => member.id === loan.memberId)?.name ?? "",
-			bookName: books.find((book) => book.id === loan.bookId)?.name ?? "",
-			bookAuthor: books.find((book) => book.id === loan.bookId)?.author ?? "",
+			memberName: members.find((member) => member.id === loan.memberId)?.name ?? "Not Found",
+			bookName: books.find((book) => book.id === loan.bookId)?.name ?? "Not Found",
+			bookAuthor: books.find((book) => book.id === loan.bookId)?.author ?? "Not Found",
 			overdueTime: loan.overdueTime,
 		})
 	});
