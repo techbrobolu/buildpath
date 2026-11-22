@@ -1,0 +1,107 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.listOverdue = exports.checkIn = exports.checkOut = void 0;
+const constants_1 = require("@/constants");
+const isOverdue = (loan, currentDate) => {
+    const diffMs = new Date(currentDate).getTime() - new Date(loan.dueDate).getTime(); // Milliseconds overdue: positive means overdue (e.g. 86_400_000 = 1 day); negative means not yet due.
+    if (diffMs > 0) {
+        const overdueTime = Math.ceil(diffMs / constants_1.MS_PER_DAY);
+        return {
+            overdue: true,
+            overdueTime: overdueTime,
+            message: `The loan is overdue by ${overdueTime} day(s)`,
+        };
+    }
+    return { overdue: false, overdueTime: 0, message: "Loan is not overdue" };
+};
+const checkOut = (memberId, bookId, members, books, loans, currentDate = new Date().toISOString()) => {
+    // 1. if the book doesn't exist return a response that states it
+    // 2. if the book is already borrowed return a response that states it
+    // 3. filter for the member's active loans
+    // 4. if the member currently has 2 borrowed books return a response that states it
+    // 5. if the book is overdue return a response that states it
+    // 6. if it passes all the tests above:
+    //    > set the book's borrow status to true
+    //    > set the loan's loan date to the current date
+    //    > set the loan's due date to the current date + 14 days
+    //    > set the loan's return date to null
+    //    > push the new loan object to the loans array
+    //    > return a response that states it can be borrowed and the loan object
+    const member = members.find((member) => member.id == memberId);
+    if (!member) {
+        return { canBorrow: false, reason: "Member does not exist" };
+    }
+    const book = books.find((book) => book.id === bookId);
+    if (!book) {
+        return { canBorrow: false, reason: "Book does not exist" };
+    }
+    if (loans.some((loan) => loan.bookId === bookId && loan.returnDate === null)) {
+        return { canBorrow: false, reason: "The book has been borrowed" };
+    }
+    const activeLoans = loans.filter((loan) => loan.memberId === memberId && loan.returnDate === null);
+    if (activeLoans.length >= constants_1.MAX_ACTIVE_LOANS) {
+        return { canBorrow: false, reason: `Member has already borrowed ${constants_1.MAX_ACTIVE_LOANS} books` };
+    }
+    if (activeLoans.some((loan) => isOverdue(loan, currentDate).overdue)) {
+        return { canBorrow: false, reason: "You have an active overdue loan" };
+    }
+    const dueDate = new Date(new Date(currentDate).getTime() + constants_1.MAX_DAYS * constants_1.MS_PER_DAY).toISOString();
+    const loan = {
+        id: String(loans.length + 1),
+        memberId: memberId,
+        bookId: bookId,
+        loanDate: currentDate,
+        dueDate: dueDate,
+        returnDate: null,
+    };
+    loans.push(loan);
+    return { canBorrow: true, loan: loan };
+};
+exports.checkOut = checkOut;
+const checkIn = (loans, books, bookId, currentDate = new Date().toISOString()) => {
+    // 1. if book is checked out return message else set the book's borrow status to false
+    // 2. set the loan's return date to the current date
+    // 3. check if the book is overdue and return the appropriate response
+    if (!books.find((book) => book.id === bookId)) {
+        return { checkedIn: false, message: "bookId does not exist" };
+    }
+    const loan = loans.filter((loan) => loan.bookId === bookId && loan.returnDate === null)[0];
+    if (!loan) {
+        return { checkedIn: false, message: "Book is not checked out" };
+    }
+    const overdueResponse = isOverdue(loan, currentDate);
+    if (overdueResponse.overdue) {
+        loan.overdueTime = overdueResponse.overdueTime;
+        loan.returnDate = currentDate;
+        return { overdue: true, checkedIn: true, message: overdueResponse.message };
+    }
+    loan.returnDate = currentDate;
+    return { overdue: false, checkedIn: true, message: "Book checked in successfully" };
+};
+exports.checkIn = checkIn;
+const listOverdue = (loans, members, books, currentDate = new Date().toISOString()) => {
+    // 1. Get current date
+    // 2. Get overdue loans by filtering the main loans array using the conditions:
+    //		> If the loan's returnDate is null AND
+    //		> If the loan is overdue (to be checked using the isOverdue func)
+    // 3. If there are no overdue loans return "There are no overdue loans"
+    // 4. For each overdue loans add their overdue duration
+    // 5. Sort the overdue loans using their overdue duration
+    const overdueList = [];
+    const overdueLoans = loans.filter((loan) => loan.returnDate === null && isOverdue(loan, currentDate).overdue);
+    if (overdueLoans.length == 0)
+        return "There are no overdue loans";
+    overdueLoans.forEach((loan) => {
+        const overdueResponse = isOverdue(loan, currentDate);
+        loan.overdueTime = overdueResponse.overdueTime;
+        overdueList.push({
+            loanId: loan.id,
+            memberName: members.find((member) => member.id === loan.memberId)?.name ?? "Not Found",
+            bookName: books.find((book) => book.id === loan.bookId)?.name ?? "Not Found",
+            bookAuthor: books.find((book) => book.id === loan.bookId)?.author ?? "Not Found",
+            overdueTime: loan.overdueTime,
+        });
+    });
+    return overdueList.sort((a, b) => (b.overdueTime ?? 0) - (a.overdueTime ?? 0));
+};
+exports.listOverdue = listOverdue;

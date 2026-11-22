@@ -1,0 +1,136 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const vitest_1 = require("vitest");
+const index_1 = require("@/index");
+const constants_1 = require("@/constants");
+(0, vitest_1.describe)("checkout", () => {
+    let loans;
+    let books;
+    let members;
+    (0, vitest_1.beforeEach)(() => {
+        loans = [
+            {
+                id: "1",
+                memberId: "1",
+                bookId: "2",
+                loanDate: "2025-10-05T10:00:00.000Z",
+                dueDate: "2025-10-19T10:00:00.000Z",
+                returnDate: null,
+            },
+            {
+                id: "2",
+                memberId: "2",
+                bookId: "3",
+                loanDate: "2025-10-08T10:00:00.000Z",
+                dueDate: "2025-10-22T10:00:00.000Z",
+                returnDate: "2025-10-20T10:00:00.000Z",
+            },
+            {
+                id: "3",
+                memberId: "1",
+                bookId: "4",
+                loanDate: "2025-10-10T10:00:00.000Z",
+                dueDate: "2025-10-24T10:00:00.000Z",
+                returnDate: null,
+            },
+            {
+                id: "4",
+                memberId: "2",
+                bookId: "1",
+                loanDate: "2025-10-10T10:00:00.000Z",
+                dueDate: "2025-10-24T10:00:00.000Z",
+                returnDate: null,
+            },
+        ];
+        books = [
+            {
+                id: "1",
+                name: "The Great Gatsby",
+                author: "F. Scott Fitzgerald",
+            },
+            {
+                id: "2",
+                name: "To Kill a Mockingbird",
+                author: "Harper Lee",
+            },
+            {
+                id: "3",
+                name: "1984",
+                author: "George Orwell",
+            },
+            {
+                id: "4",
+                name: "The Catcher in the Rye",
+                author: "J.D. Salinger",
+            },
+            {
+                id: "5",
+                name: "Brave New World",
+                author: "Aldous Huxley",
+            },
+            {
+                id: "6",
+                name: "The Lord of the Rings",
+                author: "J.R.R. Tolkien",
+            },
+            {
+                id: "7",
+                name: "The Hobbit",
+                author: "J.R.R. Tolkien",
+            },
+        ];
+        members = [
+            {
+                id: "1",
+                name: "Brian Creed",
+            },
+            {
+                id: "2",
+                name: "Jane Doe",
+            },
+            {
+                id: "3",
+                name: "John Smith",
+            },
+            {
+                id: "4",
+                name: "Filly Anderson"
+            }
+        ];
+    });
+    (0, vitest_1.it)("should block if member does not exist", () => {
+        const loans = [];
+        const memberId = "f";
+        const fakebookId = "4";
+        const result = (0, index_1.checkOut)(memberId, fakebookId, members, books, loans);
+        (0, vitest_1.expect)(result).toEqual({ canBorrow: false, reason: "Member does not exist" });
+    });
+    (0, vitest_1.it)("should block if item does not exist", () => {
+        const memberId = "2";
+        const fakebookId = "23";
+        const result = (0, index_1.checkOut)(memberId, fakebookId, members, books, loans);
+        (0, vitest_1.expect)(result).toEqual({ canBorrow: false, reason: "Book does not exist" }); // what are you checking?
+    });
+    (0, vitest_1.it)("should block if item is already borrowed", () => {
+        const memberId = "2";
+        const bookId = "2";
+        const result = (0, index_1.checkOut)(memberId, bookId, members, books, loans);
+        (0, vitest_1.expect)(result).toEqual({ canBorrow: false, reason: "The book has been borrowed" });
+    });
+    (0, vitest_1.it)("should block if member has already borrowed 2 or more books", () => {
+        const memberId = "1";
+        const bookId = "3";
+        const result = (0, index_1.checkOut)(memberId, bookId, members, books, loans);
+        (0, vitest_1.expect)(result).toEqual({
+            canBorrow: false,
+            reason: `Member has already borrowed ${constants_1.MAX_ACTIVE_LOANS} books`,
+        });
+    });
+    (0, vitest_1.it)("should block if member has overdue loan", () => {
+        const memberId = "2";
+        const bookId = "3";
+        const currentDate = "2025-10-29T10:00:00.000Z";
+        const result = (0, index_1.checkOut)(memberId, bookId, members, books, loans, currentDate);
+        (0, vitest_1.expect)(result).toEqual({ canBorrow: false, reason: "You have an active overdue loan" });
+    });
+});

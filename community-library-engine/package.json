@@ -1,7 +1,7 @@
 {
 	"name": "buildpath",
 	"version": "1.0.0",
-	"description": "A clear path to becoming a fullstack engineer.",
+	"description": "The checkout rules of a tiny volunteer library, written as pure JavaScript.",
 	"main": "index.js",
 	"scripts": {
 		"build": "tsc",
