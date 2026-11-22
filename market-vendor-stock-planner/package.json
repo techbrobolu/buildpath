@@ -1,0 +1,27 @@
+{
+	"name": "market-vendor-stock-planner",
+	"version": "1.0.0",
+	"description": "Help a farmers' market stall decide how much to bring next Saturday.",
+	"main": "index.js",
+	"scripts": {
+		"build": "tsc",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/techbrobolu/buildpath.git"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"type": "commonjs",
+	"bugs": {
+		"url": "https://github.com/techbrobolu/buildpath/issues"
+	},
+	"homepage": "https://github.com/techbrobolu/buildpath#readme",
+	"devDependencies": {
+		"typescript": "^7.0.2",
+		"vitest": "^5.1.1"
+	}
+}
