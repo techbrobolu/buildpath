@@ -92,6 +92,7 @@ export const checkIn: CheckIn = (loans, items, itemId, currentDate = new Date().
 	const overdueResponse = isOverdue(loan, currentDate);
 	if (overdueResponse.overdue) {
 		loan.overdueTime = overdueResponse.overdueTime;
+		loan.returnDate = currentDate;
 		return { overdue: true, checkedIn: true, message: overdueResponse.message };
 	}
 	
