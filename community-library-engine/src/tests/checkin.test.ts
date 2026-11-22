@@ -1,17 +1,17 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { checkIn } from "@/index";
-import type { Item, Loan } from "@/types";
+import type { Book, Loan } from "@/types";
 
 describe("checkin", () => {
 	let loans: Loan[];
-	let items: Item[];
+	let books: Book[];
 
 	beforeEach(() => {
 		loans = [
 			{
 				id: "1",
 				memberId: "2",
-				itemId: "7",
+				bookId: "7",
 				loanDate: "2025-10-01T10:00:00.000Z",
 				dueDate: "2025-10-15T10:00:00.000Z",
 				returnDate: "2025-10-13T10:00:00.000Z",
@@ -19,7 +19,7 @@ describe("checkin", () => {
 			{
 				id: "2",
 				memberId: "1",
-				itemId: "2",
+				bookId: "2",
 				loanDate: "2025-10-05T10:00:00.000Z",
 				dueDate: "2025-10-19T10:00:00.000Z",
 				returnDate: null,
@@ -27,7 +27,7 @@ describe("checkin", () => {
 			{
 				id: "3",
 				memberId: "4",
-				itemId: "4",
+				bookId: "4",
 				loanDate: "2025-10-08T10:00:00.000Z",
 				dueDate: "2025-10-22T10:00:00.000Z",
 				returnDate: null,
@@ -35,7 +35,7 @@ describe("checkin", () => {
 			{
 				id: "4",
 				memberId: "1",
-				itemId: "5",
+				bookId: "5",
 				loanDate: "2025-10-10T10:00:00.000Z",
 				dueDate: "2025-10-24T10:00:00.000Z",
 				returnDate: null,
@@ -43,7 +43,7 @@ describe("checkin", () => {
 			{
 				id: "5",
 				memberId: "3",
-				itemId: "1",
+				bookId: "1",
 				loanDate: "2025-10-12T10:00:00.000Z",
 				dueDate: "2025-10-26T10:00:00.000Z",
 				returnDate: "2025-10-25T10:00:00.000Z",
@@ -51,14 +51,14 @@ describe("checkin", () => {
 			{
 				id: "6",
 				memberId: "2",
-				itemId: "6",
+				bookId: "6",
 				loanDate: "2025-10-14T10:00:00.000Z",
 				dueDate: "2025-10-28T10:00:00.000Z",
 				returnDate: null,
 			},
 		];
 
-		items = [
+		books = [
 			{
 				id: "1",
 				name: "The Great Gatsby",
@@ -97,28 +97,28 @@ describe("checkin", () => {
 		];
 	});
 
-	it("should block if item does not exist", () => {
-		const itemId = "a";
-        const result = checkIn(loans, items, itemId);
-        
-		expect(result).toEqual({ checkedIn: false, message: "itemId does not exist" });
+	it("should block if Book does not exist", () => {
+		const bookId = "a";
+		const result = checkIn(loans, books, bookId);
+
+		expect(result).toEqual({ checkedIn: false, message: "bookId does not exist" });
 	});
 	it("should block if the book is not checked out", () => {
-        const itemId = "1";
-        const result = checkIn(loans, items, itemId);
+		const bookId = "1";
+		const result = checkIn(loans, books, bookId);
 
 		expect(result).toEqual({ checkedIn: false, message: "Book is not checked out" });
 	});
 	it("should notify that the loan is overdue", () => {
-		const itemId = "2";
-		const result = checkIn(loans, items, itemId);
+		const bookId = "2";
+		const result = checkIn(loans, books, bookId);
 
 		expect(result.overdue).toBe(true);
 	});
 	it("should checkin successfully", () => {
-		const itemId = "5";
+		const bookId = "5";
 		const currentDate = "2025-10-22T10:00:00.000Z";
-		const result = checkIn(loans, items, itemId, currentDate);
+		const result = checkIn(loans, books, bookId, currentDate);
 
 		expect(result.message).toEqual("Book checked in successfully");
 	});

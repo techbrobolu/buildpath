@@ -1,4 +1,4 @@
-import type { Loan, CheckOut, CheckIn, IsOverdue, ListOverdue } from "@/types";
+import type { Loan, CheckOut, CheckIn, IsOverdue, ListOverdue, ListOverdueResponseItem } from "@/types";
 import { MAX_DAYS, MS_PER_DAY, MAX_ACTIVE_LOANS } from "@/constants";
 
 const isOverdue: IsOverdue = (loan, currentDate) => {
@@ -17,9 +17,9 @@ const isOverdue: IsOverdue = (loan, currentDate) => {
 
 export const checkOut: CheckOut = (
 	memberId,
-	itemId,
+	bookId,
 	members,
-	items,
+	books,
 	loans,
 	currentDate = new Date().toISOString(),
 ) => {
@@ -41,11 +41,11 @@ export const checkOut: CheckOut = (
 		return { canBorrow: false, reason: "Member does not exist" };
 	}
 
-	const book = items.find((item) => item.id === itemId);
+	const book = books.find((book) => book.id === bookId);
 	if (!book) {
 		return { canBorrow: false, reason: "Book does not exist" };
 	}
-	if (loans.some((loan) => loan.itemId === itemId && loan.returnDate === null)) {
+	if (loans.some((loan) => loan.bookId === bookId && loan.returnDate === null)) {
 		return { canBorrow: false, reason: "The book has been borrowed" };
 	}
 
@@ -64,7 +64,7 @@ export const checkOut: CheckOut = (
 	const loan: Loan = {
 		id: String(loans.length + 1),
 		memberId: memberId,
-		itemId: itemId,
+		bookId: bookId,
 		loanDate: currentDate,
 		dueDate: dueDate,
 		returnDate: null,
@@ -75,16 +75,16 @@ export const checkOut: CheckOut = (
 	return { canBorrow: true, loan: loan };
 };
 
-export const checkIn: CheckIn = (loans, items, itemId, currentDate = new Date().toISOString()) => {
+export const checkIn: CheckIn = (loans, books, bookId, currentDate = new Date().toISOString()) => {
 	// 1. if book is checked out return message else set the book's borrow status to false
 	// 2. set the loan's return date to the current date
 	// 3. check if the book is overdue and return the appropriate response
 
-	if (!items.find((item) => item.id === itemId)) {
-		return { checkedIn: false, message: "itemId does not exist" };
+	if (!books.find((book) => book.id === bookId)) {
+		return { checkedIn: false, message: "bookId does not exist" };
 	}
 
-	const loan: Loan = loans.filter((loan) => loan.itemId === itemId && loan.returnDate === null)[0];
+	const loan: Loan = loans.filter((loan) => loan.bookId === bookId && loan.returnDate === null)[0];
 	if (!loan) {
 		return { checkedIn: false, message: "Book is not checked out" };
 	}
@@ -100,7 +100,7 @@ export const checkIn: CheckIn = (loans, items, itemId, currentDate = new Date().
 	return { overdue: false, checkedIn: true, message: "Book checked in successfully" };
 };
 
-export const listOverdue: ListOverdue = (loans, currentDate = new Date().toISOString()) => {
+export const listOverdue: ListOverdue = (loans, members, books, currentDate = new Date().toISOString()) => {
 	// 1. Get current date
 	// 2. Get overdue loans by filtering the main loans array using the conditions:
 	//		> If the loan's returnDate is null AND
@@ -109,6 +109,7 @@ export const listOverdue: ListOverdue = (loans, currentDate = new Date().toISOSt
 	// 4. For each overdue loans add their overdue duration
 	// 5. Sort the overdue loans using their overdue duration
 
+	const overdueList: ListOverdueResponseItem[] = [];
 	const overdueLoans = loans.filter(
 		(loan) => loan.returnDate === null && isOverdue(loan, currentDate).overdue,
 	);
@@ -117,7 +118,14 @@ export const listOverdue: ListOverdue = (loans, currentDate = new Date().toISOSt
 	overdueLoans.forEach((loan) => {
 		const overdueResponse = isOverdue(loan, currentDate);
 		loan.overdueTime = overdueResponse.overdueTime;
+		overdueList.push({
+			loanId: loan.id,
+			memberName: members.find((member) => member.id === loan.memberId)?.name ?? "",
+			bookName: books.find((book) => book.id === loan.bookId)?.name ?? "",
+			bookAuthor: books.find((book) => book.id === loan.bookId)?.author ?? "",
+			overdueTime: loan.overdueTime,
+		})
 	});
 
-	return overdueLoans.sort((a, b) => (b.overdueTime ?? 0) - (a.overdueTime ?? 0));
+	return overdueList.sort((a, b) => (b.overdueTime ?? 0) - (a.overdueTime ?? 0));
 };

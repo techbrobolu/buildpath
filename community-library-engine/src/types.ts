@@ -1,4 +1,4 @@
-type Item = {
+type Book = {
 	readonly id: string;
 	name: string;
 	author: string;
@@ -12,7 +12,7 @@ type Member = {
 type Loan = {
 	readonly id: string;
 	memberId: string;
-	itemId: string;
+	bookId: string;
 	loanDate: string;
 	dueDate: string;
 	returnDate: string | null;
@@ -37,9 +37,17 @@ type OverdueStatus = {
 	message: string;
 };
 
-type CheckOut = (memberId: string, itemId: string, members: Member[], items: Item[], loans: Loan[], currentDate?: string) => CheckoutResponse;
-type CheckIn = (loans: Loan[], items: Item[], itemId: string, currentDate?: string) => CheckinResponse;
-type IsOverdue = (loan: Loan, currentDate: string) => OverdueStatus;
-type ListOverdue = (loans: Loan[], currentDate?: string) => Loan[] | string
+type ListOverdueResponseItem = {
+	loanId: string;
+	memberName: string;
+	bookName: string;
+	bookAuthor: string;
+	overdueTime: number;
+};
 
-export { Item, Member, Loan, CheckOut, CheckIn, IsOverdue, ListOverdue };
+type CheckOut = (memberId: string, itemId: string, members: Member[], books: Book[], loans: Loan[], currentDate?: string) => CheckoutResponse;
+type CheckIn = (loans: Loan[], books: Book[], itemId: string, currentDate?: string) => CheckinResponse;
+type IsOverdue = (loan: Loan, currentDate: string) => OverdueStatus;
+type ListOverdue = (loans: Loan[], members: Member[], books: Book[], currentDate?: string) => ListOverdueResponseItem[] | string
+
+export { Book, Member, Loan, CheckOut, CheckIn, IsOverdue, ListOverdue, ListOverdueResponseItem };
