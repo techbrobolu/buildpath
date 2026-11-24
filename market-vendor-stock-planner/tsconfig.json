@@ -3,15 +3,15 @@
 		"target": "ES2022",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
-		"outDir": "./dist",
-		"rootDir": "./src",
+		"outDir": "dist",
+		"rootDir": "src",
 		"strict": true,
 		"skipLibCheck": true,
 		"paths": {
 			"@": ["./src"],
 			"@/index": ["./src/index"],
 			"@/types": ["./src/types"],
-			"@/sample-data": ["./src/utils/sample-data"]
+			"@/sample-data": ["./src/utils/sample-data.ts"]
 		}
 	},
 	"include": ["./src/**/*"]
