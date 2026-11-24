@@ -9,4 +9,6 @@ interface SaleRecord {
 	weather: Weather;
 }
 
-export { Weather, SaleRecord };
+type GroupByProduct = (sales: SaleRecord[]) => Record<string, SaleRecord[]>
+
+export { Weather, SaleRecord, GroupByProduct };

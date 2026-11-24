@@ -11,7 +11,7 @@
 			"@": ["./src"],
 			"@/index": ["./src/index"],
 			"@/types": ["./src/types"],
-			"@/constants": ["./src/constants"]
+			"@/sample-data": ["./src/utils/sample-data"]
 		}
 	},
 	"include": ["./src/**/*"]
