@@ -10,5 +10,6 @@ interface SaleRecord {
 }
 
 type GroupByProduct = (sales: SaleRecord[]) => Record<string, SaleRecord[]>
+type GetAverageSold = (sales: Record<string, SaleRecord[]>) => Record<string, number>
 
-export { Weather, SaleRecord, GroupByProduct };
+export { Weather, SaleRecord, GroupByProduct, GetAverageSold };
