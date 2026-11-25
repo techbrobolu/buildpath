@@ -48,7 +48,7 @@ export const getSellThroughRate: GetSellThroughRate = (groupedSales: Record<stri
 	let averageSold = getAverageSold(groupedSales);
 	let averageMade = getAverageMade(groupedSales);
 
-	Object.keys(groupedSales).forEach((key) => {
+	Object.keys(averageSold).forEach((key) => {
 		sellThroughRate[key] = Math.round((averageSold[key] / averageMade[key]) * 100);
 	});
 
