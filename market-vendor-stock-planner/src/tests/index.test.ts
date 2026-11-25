@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getAverageMade, getAverageSold, groupByProduct } from "@/index";
+import { getAverageMade, getAverageSold, getSellThroughRate, groupByProduct } from "@/index";
 import { SaleRecord } from "@/types";
 import { sampleData } from "@/sample-data";
 
@@ -154,6 +154,22 @@ describe("Tests for getAverageMade", () => {
 		expect(averageMade).toEqual({
 			sourdough: 23,
 			preserves: 17,
+		});
+	});
+});
+
+describe("Tests for getSellThroughRate", () => {
+	it("Should return an obj with the same props as groupedSales", () => {
+		const groupedSales = groupByProduct(records);
+		const sellThroughRate = getSellThroughRate(groupedSales);
+		expect(Object.keys(sellThroughRate)).toEqual(Object.keys(groupedSales));
+	});
+	it("Should return the right sell through rates", () => {
+		const groupedSales = groupByProduct(records);
+		const sellThroughRate = getSellThroughRate(groupedSales);
+		expect(sellThroughRate).toEqual({
+			sourdough: 87,
+			preserves: 82,
 		});
 	});
 });
