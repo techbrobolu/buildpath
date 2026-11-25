@@ -1,76 +1,28 @@
-import { getAverageSold, groupByProduct } from "@/index";
-import { SaleRecord } from "@/types";
 import { beforeEach, describe, expect, it } from "vitest";
+import { getAverageMade, getAverageSold, groupByProduct } from "@/index";
+import { SaleRecord } from "@/types";
+import { sampleData } from "@/sample-data";
+
+let records: SaleRecord[];
+
+beforeEach(() => {
+	records = sampleData;
+});
 
 describe("Tests for groupByProduct()", () => {
-	let records: SaleRecord[]
-
-	beforeEach(() => {
-		records = [
-			{
-				week: 1,
-				productName: "sourdough",
-				amountMade: 20,
-				amountSold: 16,
-				isSoldOut: false,
-				weather: "sunny",
-			},
-			{
-				week: 1,
-				productName: "preserves",
-				amountMade: 15,
-				amountSold: 9,
-				isSoldOut: false,
-				weather: "sunny",
-			},
-			{
-				week: 2,
-				productName: "sourdough",
-				amountMade: 20,
-				amountSold: 20,
-				isSoldOut: true,
-				weather: "rainy",
-			},
-			{
-				week: 2,
-				productName: "preserves",
-				amountMade: 15,
-				amountSold: 11,
-				isSoldOut: false,
-				weather: "rainy",
-			},
-			{
-				week: 3,
-				productName: "sourdough",
-				amountMade: 24,
-				amountSold: 19,
-				isSoldOut: false,
-				weather: "cloudy",
-			},
-			{
-				week: 3,
-				productName: "preserves",
-				amountMade: 18,
-				amountSold: 18,
-				isSoldOut: true,
-				weather: "cloudy",
-			},
-		];
-	})
-
 	it("The keys are product names", () => {
 		const result = groupByProduct(records);
-		expect(Object.keys(result)).toEqual(["sourdough", "preserves"])
-	})
+		expect(Object.keys(result)).toEqual(["sourdough", "preserves"]);
+	});
 	it("Each value is an array of records", () => {
 		const result = groupByProduct(records);
 		expect(Array.isArray(result.sourdough)).toBe(true);
 		expect(Array.isArray(result.preserves)).toBe(true);
-	})
+	});
 	it("The arrays contain the right records", () => {
 		const result = groupByProduct(records);
-		expect(result.sourdough).toHaveLength(3);
-		expect(result.preserves).toHaveLength(3);
+		expect(result.sourdough).toHaveLength(6);
+		expect(result.preserves).toHaveLength(6);
 		expect(result.sourdough).toEqual([
 			{
 				week: 1,
@@ -93,6 +45,30 @@ describe("Tests for groupByProduct()", () => {
 				productName: "sourdough",
 				amountMade: 24,
 				amountSold: 19,
+				isSoldOut: false,
+				weather: "cloudy",
+			},
+			{
+				week: 4,
+				productName: "sourdough",
+				amountMade: 24,
+				amountSold: 24,
+				isSoldOut: true,
+				weather: "sunny",
+			},
+			{
+				week: 5,
+				productName: "sourdough",
+				amountMade: 22,
+				amountSold: 17,
+				isSoldOut: false,
+				weather: "rainy",
+			},
+			{
+				week: 6,
+				productName: "sourdough",
+				amountMade: 26,
+				amountSold: 21,
 				isSoldOut: false,
 				weather: "cloudy",
 			},
@@ -122,66 +98,35 @@ describe("Tests for groupByProduct()", () => {
 				isSoldOut: true,
 				weather: "cloudy",
 			},
-		]);
-	})
-});
-
-describe("Tests for getAverageSold", () => {
-	let records: SaleRecord[];
-
-	beforeEach(() => {
-		records = [
 			{
-				week: 1,
-				productName: "sourdough",
-				amountMade: 20,
-				amountSold: 16,
+				week: 4,
+				productName: "preserves",
+				amountMade: 18,
+				amountSold: 13,
 				isSoldOut: false,
 				weather: "sunny",
 			},
 			{
-				week: 1,
-				productName: "preserves",
-				amountMade: 15,
-				amountSold: 9,
-				isSoldOut: false,
-				weather: "sunny",
-			},
-			{
-				week: 2,
-				productName: "sourdough",
-				amountMade: 20,
-				amountSold: 20,
-				isSoldOut: true,
-				weather: "rainy",
-			},
-			{
-				week: 2,
-				productName: "preserves",
-				amountMade: 15,
-				amountSold: 11,
-				isSoldOut: false,
-				weather: "rainy",
-			},
-			{
-				week: 3,
-				productName: "sourdough",
-				amountMade: 24,
-				amountSold: 19,
-				isSoldOut: false,
-				weather: "cloudy",
-			},
-			{
-				week: 3,
+				week: 5,
 				productName: "preserves",
 				amountMade: 18,
 				amountSold: 18,
 				isSoldOut: true,
+				weather: "rainy",
+			},
+			{
+				week: 6,
+				productName: "preserves",
+				amountMade: 20,
+				amountSold: 14,
+				isSoldOut: false,
 				weather: "cloudy",
 			},
-		];
+		]);
 	});
+});
 
+describe("Tests for getAverageSold", () => {
 	it("Should return an obj with the same props as groupedSales", () => {
 		const groupedSales = groupByProduct(records);
 		const averageSold = getAverageSold(groupedSales);
@@ -191,8 +136,24 @@ describe("Tests for getAverageSold", () => {
 		const groupedSales = groupByProduct(records);
 		const averageSold = getAverageSold(groupedSales);
 		expect(averageSold).toEqual({
-			sourdough: 18,
-			preserves: 13,
-		})
-	})
+			sourdough: 20,
+			preserves: 14,
+		});
+	});
+});
+
+describe("Tests for getAverageMade", () => {
+	it("Should return an obj with the same props as groupedSales", () => {
+		const groupedSales = groupByProduct(records);
+		const averageMade = getAverageMade(groupedSales);
+		expect(Object.keys(averageMade)).toEqual(Object.keys(groupedSales));
+	});
+	it("Should return the right averages", () => {
+		const groupedSales = groupByProduct(records);
+		const averageMade = getAverageMade(groupedSales);
+		expect(averageMade).toEqual({
+			sourdough: 23,
+			preserves: 17,
+		});
+	});
 });
