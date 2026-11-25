@@ -1,4 +1,10 @@
-import { GetAverageMade, GetAverageSold, GroupByProduct, SaleRecord } from "@/types";
+import {
+	GetAverageMade,
+	GetAverageSold,
+	GetSellThroughRate,
+	GroupByProduct,
+	SaleRecord,
+} from "@/types";
 
 export const groupByProduct: GroupByProduct = (sales) => {
 	return sales.reduce(
@@ -35,4 +41,16 @@ export const getAverageMade: GetAverageMade = (groupedSales: Record<string, Sale
 	});
 
 	return averageMade;
+};
+
+export const getSellThroughRate: GetSellThroughRate = (groupedSales: Record<string, SaleRecord[]>) => {
+	let sellThroughRate: Record<string, number> = {};
+	let averageSold = getAverageSold(groupedSales);
+	let averageMade = getAverageMade(groupedSales);
+
+	Object.keys(groupedSales).forEach((key) => {
+		sellThroughRate[key] = Math.round((averageSold[key] / averageMade[key]) * 100);
+	});
+
+	return sellThroughRate;
 };
