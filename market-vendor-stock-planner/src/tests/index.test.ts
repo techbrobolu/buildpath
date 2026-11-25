@@ -10,7 +10,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 1,
 				productName: "sourdough",
-				amountBrought: 20,
+				amountMade: 20,
 				amountSold: 16,
 				isSoldOut: false,
 				weather: "sunny",
@@ -18,7 +18,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 1,
 				productName: "preserves",
-				amountBrought: 15,
+				amountMade: 15,
 				amountSold: 9,
 				isSoldOut: false,
 				weather: "sunny",
@@ -26,7 +26,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 2,
 				productName: "sourdough",
-				amountBrought: 20,
+				amountMade: 20,
 				amountSold: 20,
 				isSoldOut: true,
 				weather: "rainy",
@@ -34,7 +34,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 2,
 				productName: "preserves",
-				amountBrought: 15,
+				amountMade: 15,
 				amountSold: 11,
 				isSoldOut: false,
 				weather: "rainy",
@@ -42,7 +42,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 3,
 				productName: "sourdough",
-				amountBrought: 24,
+				amountMade: 24,
 				amountSold: 19,
 				isSoldOut: false,
 				weather: "cloudy",
@@ -50,7 +50,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 3,
 				productName: "preserves",
-				amountBrought: 18,
+				amountMade: 18,
 				amountSold: 18,
 				isSoldOut: true,
 				weather: "cloudy",
@@ -75,7 +75,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 1,
 				productName: "sourdough",
-				amountBrought: 20,
+				amountMade: 20,
 				amountSold: 16,
 				isSoldOut: false,
 				weather: "sunny",
@@ -83,7 +83,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 2,
 				productName: "sourdough",
-				amountBrought: 20,
+				amountMade: 20,
 				amountSold: 20,
 				isSoldOut: true,
 				weather: "rainy",
@@ -91,7 +91,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 3,
 				productName: "sourdough",
-				amountBrought: 24,
+				amountMade: 24,
 				amountSold: 19,
 				isSoldOut: false,
 				weather: "cloudy",
@@ -101,7 +101,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 1,
 				productName: "preserves",
-				amountBrought: 15,
+				amountMade: 15,
 				amountSold: 9,
 				isSoldOut: false,
 				weather: "sunny",
@@ -109,7 +109,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 2,
 				productName: "preserves",
-				amountBrought: 15,
+				amountMade: 15,
 				amountSold: 11,
 				isSoldOut: false,
 				weather: "rainy",
@@ -117,7 +117,7 @@ describe("Tests for groupByProduct()", () => {
 			{
 				week: 3,
 				productName: "preserves",
-				amountBrought: 18,
+				amountMade: 18,
 				amountSold: 18,
 				isSoldOut: true,
 				weather: "cloudy",
@@ -134,7 +134,7 @@ describe("Tests for getAverageSold", () => {
 			{
 				week: 1,
 				productName: "sourdough",
-				amountBrought: 20,
+				amountMade: 20,
 				amountSold: 16,
 				isSoldOut: false,
 				weather: "sunny",
@@ -142,7 +142,7 @@ describe("Tests for getAverageSold", () => {
 			{
 				week: 1,
 				productName: "preserves",
-				amountBrought: 15,
+				amountMade: 15,
 				amountSold: 9,
 				isSoldOut: false,
 				weather: "sunny",
@@ -150,7 +150,7 @@ describe("Tests for getAverageSold", () => {
 			{
 				week: 2,
 				productName: "sourdough",
-				amountBrought: 20,
+				amountMade: 20,
 				amountSold: 20,
 				isSoldOut: true,
 				weather: "rainy",
@@ -158,7 +158,7 @@ describe("Tests for getAverageSold", () => {
 			{
 				week: 2,
 				productName: "preserves",
-				amountBrought: 15,
+				amountMade: 15,
 				amountSold: 11,
 				isSoldOut: false,
 				weather: "rainy",
@@ -166,7 +166,7 @@ describe("Tests for getAverageSold", () => {
 			{
 				week: 3,
 				productName: "sourdough",
-				amountBrought: 24,
+				amountMade: 24,
 				amountSold: 19,
 				isSoldOut: false,
 				weather: "cloudy",
@@ -174,7 +174,7 @@ describe("Tests for getAverageSold", () => {
 			{
 				week: 3,
 				productName: "preserves",
-				amountBrought: 18,
+				amountMade: 18,
 				amountSold: 18,
 				isSoldOut: true,
 				weather: "cloudy",

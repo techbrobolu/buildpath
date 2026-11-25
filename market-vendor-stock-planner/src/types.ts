@@ -3,7 +3,7 @@ type Weather = "rainy" | "sunny" | "cloudy";
 interface SaleRecord {
 	week: number;
 	productName: string;
-	amountBrought: number;
+	amountMade: number;
 	amountSold: number;
 	isSoldOut: boolean;
 	weather: Weather;
@@ -11,5 +11,6 @@ interface SaleRecord {
 
 type GroupByProduct = (sales: SaleRecord[]) => Record<string, SaleRecord[]>
 type GetAverageSold = (sales: Record<string, SaleRecord[]>) => Record<string, number>
+type GetAverageMade = (sales: Record<string, SaleRecord[]>) => Record<string, number>;
 
-export { Weather, SaleRecord, GroupByProduct, GetAverageSold };
+export { Weather, SaleRecord, GroupByProduct, GetAverageSold, GetAverageMade };
