@@ -17,7 +17,7 @@ export const getAverageSold: GetAverageSold = (groupedSales: Record<string, Sale
 
     Object.keys(groupedSales).forEach((key) => {
         let totalSold = groupedSales[key].reduce((prev, amount) => prev + amount.amountSold, 0)
-        averageSold[key] = totalSold/groupedSales[key].length
+        averageSold[key] = Math.round(totalSold/groupedSales[key].length)
     })
 
     return averageSold
