@@ -25,4 +25,4 @@ type GetAverageMade = (sales: Record<string, SaleRecord[]>) => Record<string, nu
 type GetSellThroughRate = (sales: Record<string, SaleRecord[]>) => Record<string, number>;
 type Recommend = (sales: SaleRecord[], productName: string, {marginInDecimal, weather}: Options) => Recommendation;
 
-export { Weather, SaleRecord, GroupByProduct, GetAverageSold, GetAverageMade, GetSellThroughRate, Recommend };
+export { Weather, SaleRecord, GroupByProduct, GetAverageSold, GetAverageMade, GetSellThroughRate, Recommend, Recommendation, Options };

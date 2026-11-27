@@ -197,7 +197,7 @@ describe("Tests for recommend()", () => {
 				"sourdough",
 				{ marginInDecimal: 0.2, weather: "sunny" },
 			),
-		).toThrow("Invalid product name");
+		).toThrow("There are no unsold-out sales");
 	});
 
 	it("Throws for an unknown product", () => {

@@ -60,7 +60,11 @@ export const recommend: Recommend = (sales, productName, { marginInDecimal, weat
 	if (!sales || !sales.length) {
 		throw new Error("Sales data is required");
 	};
+
 	const validSales = sales.filter((sale) => sale.isSoldOut !== true);
+	if(!validSales.length) {
+		throw new Error("There are no unsold-out sales");
+	}
 
 	const groupedSales = groupByProduct(validSales);
 	if (!groupedSales[productName]) {
