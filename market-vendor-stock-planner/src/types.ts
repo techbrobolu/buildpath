@@ -9,9 +9,20 @@ interface SaleRecord {
 	weather: Weather;
 }
 
+interface Recommendation{
+	productName: string;
+	amountToMake: number;
+}
+
+interface Options{
+	marginInDecimal: number;
+	weather: Weather;
+}
+
 type GroupByProduct = (sales: SaleRecord[]) => Record<string, SaleRecord[]>
 type GetAverageSold = (sales: Record<string, SaleRecord[]>) => Record<string, number>
 type GetAverageMade = (sales: Record<string, SaleRecord[]>) => Record<string, number>;
 type GetSellThroughRate = (sales: Record<string, SaleRecord[]>) => Record<string, number>;
+type Recommend = (sales: SaleRecord[], productName: string, {marginInDecimal, weather}: Options) => Recommendation;
 
-export { Weather, SaleRecord, GroupByProduct, GetAverageSold, GetAverageMade, GetSellThroughRate };
+export { Weather, SaleRecord, GroupByProduct, GetAverageSold, GetAverageMade, GetSellThroughRate, Recommend };

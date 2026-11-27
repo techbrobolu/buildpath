@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getAverageMade, getAverageSold, getSellThroughRate, groupByProduct } from "@/index";
+import { getAverageMade, getAverageSold, getSellThroughRate, groupByProduct, recommend } from "@/index";
 import { SaleRecord } from "@/types";
 import { sampleData } from "@/sample-data";
 

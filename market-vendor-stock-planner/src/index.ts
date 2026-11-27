@@ -3,6 +3,7 @@ import {
 	GetAverageSold,
 	GetSellThroughRate,
 	GroupByProduct,
+	Recommend,
 	SaleRecord,
 } from "@/types";
 
@@ -54,3 +55,21 @@ export const getSellThroughRate: GetSellThroughRate = (groupedSales: Record<stri
 
 	return sellThroughRate;
 };
+
+export const recommend: Recommend = (sales, productName, { marginInDecimal, weather }) => {
+	if (!sales || !sales.length) {
+		throw new Error("Sales data is required");
+	};
+	const validSales = sales.filter((sale) => sale.isSoldOut !== true);
+
+	const groupedSales = groupByProduct(validSales);
+	if (!groupedSales[productName]) {
+		throw new Error("Invalid product name");
+	};
+
+	const averageSold = getAverageSold(groupedSales)[productName];
+	const weatherMod = weather === "rainy" ? 0.9 : weather === "cloudy" ? 0.95 : 1;
+	const amountToMake = Math.round(averageSold * (1 + marginInDecimal) * weatherMod);
+
+	return {productName, amountToMake};
+}
