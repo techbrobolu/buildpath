@@ -19,12 +19,13 @@ interface Options {
 	weather: Weather;
 }
 
+type GroupUnsoldOut = (sales: SaleRecord[]) => Record<string, SaleRecord[]>;
 type GroupByProduct = (sales: SaleRecord[]) => Record<string, SaleRecord[]>;
 type GetAverageSold = (sales: Record<string, SaleRecord[]>) => Record<string, number>;
 type GetAverageMade = (sales: Record<string, SaleRecord[]>) => Record<string, number>;
 type GetSellThroughRate = (sales: Record<string, SaleRecord[]>) => Record<string, number>;
 type Recommend = (
-	sales: SaleRecord[],
+	groupedSales: Record<string, SaleRecord[]>,
 	productName: string,
 	{ marginInDecimal, weather }: Options,
 ) => Recommendation;
@@ -44,4 +45,5 @@ export {
 	Recommendation,
 	Options,
 	PrintPackingList,
+	GroupUnsoldOut,
 };

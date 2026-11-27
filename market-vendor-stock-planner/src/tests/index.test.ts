@@ -1,5 +1,13 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getAverageMade, getAverageSold, getSellThroughRate, groupByProduct, recommend } from "@/index";
+import {
+	getAverageMade,
+	getAverageSold,
+	getSellThroughRate,
+	groupByProduct,
+	groupUnsoldOut,
+	printPackingList,
+	recommend,
+} from "@/index";
 import { SaleRecord } from "@/types";
 import { sampleData } from "@/sample-data";
 
@@ -174,63 +182,105 @@ describe("Tests for getSellThroughRate", () => {
 	});
 });
 
+describe("Tests for groupUnsoldOut()", () => {
+	it("Excludes sold-out records and groups the remaining records", () => {
+		const groupedSales = groupUnsoldOut(records);
+
+		expect(groupedSales.sourdough).toHaveLength(4);
+		expect(groupedSales.preserves).toHaveLength(4);
+		expect(groupedSales.sourdough.every((sale) => !sale.isSoldOut)).toBe(true);
+		expect(groupedSales.preserves.every((sale) => !sale.isSoldOut)).toBe(true);
+	});
+
+	it("Throws when every record is sold out", () => {
+		const soldOutRecords: SaleRecord[] = [
+			{
+				week: 1,
+				productName: "sourdough",
+				amountMade: 20,
+				amountSold: 20,
+				isSoldOut: true,
+				weather: "sunny",
+			},
+		];
+
+		expect(() => groupUnsoldOut(soldOutRecords)).toThrow("There are no unsold-out sales");
+	});
+});
+
 describe("Tests for recommend()", () => {
-	it("Throws when sales data is missing or empty", () => {
-		expect(() => recommend([], "sourdough", { marginInDecimal: 0.2, weather: "sunny" })).toThrow(
-			"Sales data is required",
-		);
-	});
-
-	it("Throws for a product with no unsold-out sales", () => {
-		expect(() =>
-			recommend(
-				[
-					{
-						week: 1,
-						productName: "sourdough",
-						amountMade: 20,
-						amountSold: 20,
-						isSoldOut: true,
-						weather: "sunny",
-					},
-				],
-				"sourdough",
-				{ marginInDecimal: 0.2, weather: "sunny" },
-			),
-		).toThrow("There are no unsold-out sales");
-	});
-
 	it("Throws for an unknown product", () => {
-		expect(() => recommend(records, "baguette", { marginInDecimal: 0.2, weather: "sunny" })).toThrow(
+		const groupedSales = groupUnsoldOut(records);
+
+		expect(() => recommend(groupedSales, "baguette", { marginInDecimal: 0.2, weather: "sunny" })).toThrow(
 			"Invalid product name",
 		);
 	});
 
 	it("Excludes sold-out records when calculating the amount", () => {
-		expect(recommend(records, "sourdough", { marginInDecimal: 0.2, weather: "sunny" })).toEqual({
+		const groupedSales = groupUnsoldOut(records);
+
+		expect(recommend(groupedSales, "sourdough", { marginInDecimal: 0.2, weather: "sunny" })).toEqual({
 			productName: "sourdough",
 			amountToMake: 22,
 		});
 	});
 
 	it("Applies the rainy-weather modifier", () => {
-		expect(recommend(records, "preserves", { marginInDecimal: 0.2, weather: "rainy" })).toEqual({
+		const groupedSales = groupUnsoldOut(records);
+
+		expect(recommend(groupedSales, "preserves", { marginInDecimal: 0.2, weather: "rainy" })).toEqual({
 			productName: "preserves",
 			amountToMake: 13,
 		});
 	});
 
 	it("Applies the cloudy-weather modifier", () => {
-		expect(recommend(records, "preserves", { marginInDecimal: 0.2, weather: "cloudy" })).toEqual({
+		const groupedSales = groupUnsoldOut(records);
+
+		expect(recommend(groupedSales, "preserves", { marginInDecimal: 0.2, weather: "cloudy" })).toEqual({
 			productName: "preserves",
 			amountToMake: 14,
 		});
 	});
 
 	it("Does not apply a modifier for sunny weather", () => {
-		expect(recommend(records, "preserves", { marginInDecimal: 0.1, weather: "sunny" })).toEqual({
+		const groupedSales = groupUnsoldOut(records);
+
+		expect(recommend(groupedSales, "preserves", { marginInDecimal: 0.1, weather: "sunny" })).toEqual({
 			productName: "preserves",
 			amountToMake: 13,
 		});
+	});
+});
+
+describe("Tests for printPackingList()", () => {
+	it("Returns recommendations for every unsold-out product", () => {
+		expect(printPackingList(records, { marginInDecimal: 0.2, weather: "sunny" })).toBe(
+			"Your recommended packing list for a sunny weather is:\n\nsourdough: 22\npreserves: 14\n",
+		);
+	});
+
+	it("Uses the weather modifier in the printed recommendations", () => {
+		expect(printPackingList(records, { marginInDecimal: 0.2, weather: "rainy" })).toBe(
+			"Your recommended packing list for a rainy weather is:\n\nsourdough: 19\npreserves: 13\n",
+		);
+	});
+
+	it("Throws when all sales records are sold out", () => {
+		const soldOutRecords: SaleRecord[] = [
+			{
+				week: 1,
+				productName: "sourdough",
+				amountMade: 20,
+				amountSold: 20,
+				isSoldOut: true,
+				weather: "sunny",
+			},
+		];
+
+		expect(() => printPackingList(soldOutRecords, { marginInDecimal: 0.2, weather: "sunny" })).toThrow(
+			"There are no unsold-out sales",
+		);
 	});
 });

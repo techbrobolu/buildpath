@@ -1,4 +1,5 @@
 import {
+	GroupUnsoldOut,
 	GetAverageMade,
 	GetAverageSold,
 	GetSellThroughRate,
@@ -8,6 +9,7 @@ import {
 	Recommendation,
 	SaleRecord,
 } from "@/types";
+
 
 export const groupByProduct: GroupByProduct = (sales) => {
 	return sales.reduce(
@@ -23,6 +25,17 @@ export const groupByProduct: GroupByProduct = (sales) => {
 		{} as Record<string, SaleRecord[]>,
 	);
 };
+
+export const groupUnsoldOut: GroupUnsoldOut = (sales) => {
+	const filteredSales = sales.filter((sale) => sale.isSoldOut !== true);
+	if (filteredSales.length === 0) {
+		throw new Error("There are no unsold-out sales");
+	}
+
+	const groupedSales = groupByProduct(filteredSales);
+
+	return groupedSales;
+}
 
 export const getAverageSold: GetAverageSold = (groupedSales: Record<string, SaleRecord[]>) => {
 	let averageSold: Record<string, number> = {};
@@ -61,17 +74,10 @@ export const getSellThroughRate: GetSellThroughRate = (groupedSales: Record<stri
 	return sellThroughRate;
 };
 
-export const recommend: Recommend = (sales, productName, { marginInDecimal, weather }) => {
-	if (!sales || !sales.length) {
+export const recommend: Recommend = (groupedSales, productName, { marginInDecimal, weather }) => {
+	if (!groupedSales || Object.keys(groupedSales).length === 0) {
 		throw new Error("Sales data is required");
 	};
-
-	const validSales = sales.filter((sale) => sale.isSoldOut !== true);
-	if(!validSales.length) {
-		throw new Error("There are no unsold-out sales");
-	}
-
-	const groupedSales = groupByProduct(validSales);
 	if (!groupedSales[productName]) {
 		throw new Error("Invalid product name");
 	};
@@ -87,10 +93,10 @@ export const recommend: Recommend = (sales, productName, { marginInDecimal, weat
 
 export const printPackingList: PrintPackingList = (sales, { marginInDecimal, weather }) => {
 	const recommendations: Recommendation[] = []
-	const groupedSales = groupByProduct(sales)
+	const groupedSales = groupUnsoldOut(sales);
 
 	Object.keys(groupedSales).forEach((key) => {
-		recommendations.push(recommend(sales, key, { marginInDecimal, weather }));
+		recommendations.push(recommend(groupedSales, key, { marginInDecimal, weather }));
 	})
 	
 
