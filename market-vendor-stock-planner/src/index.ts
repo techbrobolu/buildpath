@@ -26,6 +26,7 @@ export const getAverageSold: GetAverageSold = (groupedSales: Record<string, Sale
 	let averageSold: Record<string, number> = {};
 
 	Object.keys(groupedSales).forEach((key) => {
+		// Formula: average sold = sum of units sold / number of sales records, rounded to a whole unit.
 		let totalSold = groupedSales[key].reduce((prev, amount) => prev + amount.amountSold, 0);
 		averageSold[key] = Math.round(totalSold / groupedSales[key].length);
 	});
@@ -37,6 +38,7 @@ export const getAverageMade: GetAverageMade = (groupedSales: Record<string, Sale
 	let averageMade: Record<string, number> = {};
 
 	Object.keys(groupedSales).forEach((key) => {
+		// Formula: average made = sum of units made / number of sales records, rounded to a whole unit.
 		let totalMade = groupedSales[key].reduce((prev, amount) => prev + amount.amountMade, 0);
 		averageMade[key] = Math.round(totalMade / groupedSales[key].length);
 	});
@@ -50,6 +52,7 @@ export const getSellThroughRate: GetSellThroughRate = (groupedSales: Record<stri
 	let averageMade = getAverageMade(groupedSales);
 
 	Object.keys(averageSold).forEach((key) => {
+		// Formula: sell-through rate (%) = (average sold / average made) * 100, rounded to a whole percent.
 		sellThroughRate[key] = Math.round((averageSold[key] / averageMade[key]) * 100);
 	});
 
@@ -72,7 +75,9 @@ export const recommend: Recommend = (sales, productName, { marginInDecimal, weat
 	};
 
 	const averageSold = getAverageSold(groupedSales)[productName];
+	// Formula: weather modifier = 0.9 for rain, 0.95 for clouds, or 1 for sun.
 	const weatherMod = weather === "rainy" ? 0.9 : weather === "cloudy" ? 0.95 : 1;
+	// Formula: amount to make = average sold * (1 + margin) * weather modifier, rounded to a whole unit.
 	const amountToMake = Math.round(averageSold * (1 + marginInDecimal) * weatherMod);
 
 	return {productName, amountToMake};
