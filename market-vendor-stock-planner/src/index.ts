@@ -3,7 +3,9 @@ import {
 	GetAverageSold,
 	GetSellThroughRate,
 	GroupByProduct,
+	PrintPackingList,
 	Recommend,
+	Recommendation,
 	SaleRecord,
 } from "@/types";
 
@@ -81,4 +83,21 @@ export const recommend: Recommend = (sales, productName, { marginInDecimal, weat
 	const amountToMake = Math.round(averageSold * (1 + marginInDecimal) * weatherMod);
 
 	return {productName, amountToMake};
+}
+
+export const printPackingList: PrintPackingList = (sales, { marginInDecimal, weather }) => {
+	const recommendations: Recommendation[] = []
+	const groupedSales = groupByProduct(sales)
+
+	Object.keys(groupedSales).forEach((key) => {
+		recommendations.push(recommend(sales, key, { marginInDecimal, weather }));
+	})
+	
+
+	let list = `Your recommended packing list for a ${weather} weather is:\n\n`;
+	for (const rec of recommendations) {
+		list += `${rec.productName}: ${rec.amountToMake}\n`
+	}
+
+	return list
 }
