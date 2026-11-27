@@ -173,3 +173,64 @@ describe("Tests for getSellThroughRate", () => {
 		});
 	});
 });
+
+describe("Tests for recommend()", () => {
+	it("Throws when sales data is missing or empty", () => {
+		expect(() => recommend([], "sourdough", { marginInDecimal: 0.2, weather: "sunny" })).toThrow(
+			"Sales data is required",
+		);
+	});
+
+	it("Throws for a product with no unsold-out sales", () => {
+		expect(() =>
+			recommend(
+				[
+					{
+						week: 1,
+						productName: "sourdough",
+						amountMade: 20,
+						amountSold: 20,
+						isSoldOut: true,
+						weather: "sunny",
+					},
+				],
+				"sourdough",
+				{ marginInDecimal: 0.2, weather: "sunny" },
+			),
+		).toThrow("Invalid product name");
+	});
+
+	it("Throws for an unknown product", () => {
+		expect(() => recommend(records, "baguette", { marginInDecimal: 0.2, weather: "sunny" })).toThrow(
+			"Invalid product name",
+		);
+	});
+
+	it("Excludes sold-out records when calculating the amount", () => {
+		expect(recommend(records, "sourdough", { marginInDecimal: 0.2, weather: "sunny" })).toEqual({
+			productName: "sourdough",
+			amountToMake: 22,
+		});
+	});
+
+	it("Applies the rainy-weather modifier", () => {
+		expect(recommend(records, "preserves", { marginInDecimal: 0.2, weather: "rainy" })).toEqual({
+			productName: "preserves",
+			amountToMake: 13,
+		});
+	});
+
+	it("Applies the cloudy-weather modifier", () => {
+		expect(recommend(records, "preserves", { marginInDecimal: 0.2, weather: "cloudy" })).toEqual({
+			productName: "preserves",
+			amountToMake: 14,
+		});
+	});
+
+	it("Does not apply a modifier for sunny weather", () => {
+		expect(recommend(records, "preserves", { marginInDecimal: 0.1, weather: "sunny" })).toEqual({
+			productName: "preserves",
+			amountToMake: 13,
+		});
+	});
+});
